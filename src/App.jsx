@@ -24,8 +24,8 @@ const firebaseConfig = {
 };
 const fbApp = initializeApp(firebaseConfig);
 const db = getFirestore(fbApp);
-const COL = "vendors_customers";
-const META_DOC = "__meta__";
+const COL = "directory";
+const META_DOC = "meta_info";
 
 // ── Google Fonts ───────────────────────────────────────────
 if (typeof document !== "undefined" && !document.getElementById("noto-serif-hk-font")) {
@@ -370,39 +370,46 @@ export default function App() {
     <div style={{fontFamily:"'Noto Sans HK', sans-serif",minHeight:"100vh",width:"100vw",background:"#eef0f5",display:"flex",flexDirection:"column",padding:0}}>
 
       {/* Header */}
-      <div style={{background:"linear-gradient(135deg,#1e1b4b,#312e81,#4f46e5)",padding:"14px 24px",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:10,boxShadow:"0 4px 20px rgba(79,70,229,0.4)"}}>
+      <div style={{background:"#eef0f5",padding:"14px 24px",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:10,boxShadow:"0 2px 8px rgba(0,0,0,0.08)",borderBottom:"1px solid #d8dce6"}}>
         <div>
           <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:2}}>
-            <div style={{width:44,height:44,background:"rgba(255,255,255,0.15)",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",border:"1.5px solid rgba(255,255,255,0.25)",flexShrink:0}}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <circle cx="9" cy="7" r="4" fill="white" opacity="0.9"/>
-                <circle cx="17" cy="9" r="3" fill="white" opacity="0.6"/>
-                <path d="M1 21c0-4 3.6-7 8-7s8 3 8 7" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.9"/>
-                <path d="M16 14c2.2.5 4 2.5 4 5" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
+            <div style={{width:44,height:44,background:"#e0e4ef",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",border:"1.5px solid #c8cfe0",flexShrink:0}}>
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="10" width="18" height="11" rx="1" stroke="#4f46e5" strokeWidth="1.8" fill="#e8eaf6"/>
+                <path d="M9 21V15h6v6" stroke="#4f46e5" strokeWidth="1.8" strokeLinejoin="round"/>
+                <path d="M1 10L12 2l11 8" stroke="#4f46e5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                <rect x="7" y="12" width="3" height="3" rx="0.5" fill="#4f46e5" opacity="0.7"/>
+                <rect x="14" y="12" width="3" height="3" rx="0.5" fill="#4f46e5" opacity="0.7"/>
               </svg>
             </div>
             <div>
               <h1 style={{margin:0,fontSize:22,color:"#1a1a1a",fontWeight:900,fontFamily:"'Noto Serif HK',serif",letterSpacing:3,lineHeight:1.1}}>供應商管理</h1>
             </div>
           </div>
-          <p style={{margin:"3px 0 0",fontSize:12,color:"rgba(199,210,254,0.85)"}}>共 {totalCo} 家供應商・{customers.length} 筆聯絡人</p>
-          {lastUpdated && <p style={{margin:"2px 0 0",fontSize:11,color:"rgba(199,210,254,0.7)"}}>🕐 最後更新：{lastUpdated}</p>}
+          <p style={{margin:"3px 0 0",fontSize:12,color:"#666"}}>共 {totalCo} 家供應商・{customers.length} 筆聯絡人</p>
+          {lastUpdated && <p style={{margin:"2px 0 0",fontSize:11,color:"#94a3b8"}}>🕐 最後更新：{lastUpdated}</p>}
           <div style={{marginTop:4}}><SyncBadge/></div>
         </div>
         <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}>
           {btn("#7c3aed", ()=>handleExport("xlsx"), "匯出 Excel", true)}
           {btn("#0891b2", ()=>handleExport("csv"),  "匯出 CSV",   true)}
-          {btn("#4f46e5", ()=>setShowPDF(true),     "匯出通訊錄 PDF", true)}
+          {btn("#4f46e5", ()=>setShowPDF(true),     "匯出通訊錄", true)}
           {isAdmin ? (<>
-            <div style={{width:1,height:32,background:"#ccc",margin:"0 4px"}}/>
-            {btn("#059669", ()=>fileRef.current.click(), "📂 匯入 Excel / CSV")}
+            <div style={{width:1,height:32,background:"#c8cfe0",margin:"0 4px"}}/>
+            {btn("#059669", ()=>fileRef.current.click(), "📂 匯入")}
             <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" style={{display:"none"}} onChange={handleImport}/>
-            {btn("#2563eb", openAdd, "＋ 新增廠商")}
-            {btn("#64748b", ()=>setShowConfirm(true), "🗑️ 清空資料")}
-            <button onClick={()=>setIsAdmin(false)} style={{background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:8,padding:"10px 14px",cursor:"pointer",fontSize:13,color:"#fff",fontWeight:700}}>🔓 登出</button>
+            {btn("#2563eb", openAdd, "＋ 新增")}
+            {btn("#64748b", ()=>setShowConfirm(true), "🗑️ 清空")}
+            <button onClick={()=>setIsAdmin(false)} style={{background:"#e0e4ef",border:"1.5px solid #c8cfe0",borderRadius:8,padding:"9px 14px",cursor:"pointer",fontSize:13,color:"#4f46e5",fontWeight:700,display:"inline-flex",alignItems:"center",gap:6}}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#4f46e5" strokeWidth="2"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round"/></svg>
+              登出
+            </button>
           </>) : (<>
-            <div style={{width:1,height:32,background:"rgba(255,255,255,0.2)",margin:"0 4px"}}/>
-            <button onClick={()=>setShowLogin(true)} style={{background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:8,padding:"10px 14px",cursor:"pointer",fontSize:13,color:"#fff",fontWeight:700}}>🔒 管理員登入</button>
+            <div style={{width:1,height:32,background:"#c8cfe0",margin:"0 4px"}}/>
+            <button onClick={()=>setShowLogin(true)} style={{background:"#e0e4ef",border:"1.5px solid #c8cfe0",borderRadius:8,padding:"9px 14px",cursor:"pointer",fontSize:13,color:"#4f46e5",fontWeight:700,display:"inline-flex",alignItems:"center",gap:6}}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#4f46e5" strokeWidth="2"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#4f46e5" strokeWidth="2" strokeLinecap="round"/></svg>
+              登入
+            </button>
           </>)}
         </div>
       </div>
