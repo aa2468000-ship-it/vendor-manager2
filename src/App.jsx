@@ -24,8 +24,8 @@ const firebaseConfig = {
 };
 const fbApp = initializeApp(firebaseConfig);
 const db = getFirestore(fbApp);
-const COL = "directory";
-const META_DOC = "meta_info";
+const COL = "vendors_customers";
+const META_DOC = "__meta__";
 
 // ── Google Fonts ───────────────────────────────────────────
 if (typeof document !== "undefined" && !document.getElementById("noto-serif-hk-font")) {
@@ -365,27 +365,28 @@ export default function App() {
 
   // ── 主畫面 ─────────────────────────────────────────────
   return (
-    <div style={{fontFamily:"'Noto Sans HK', sans-serif",minHeight:"100vh",background:"#e8e8e8",padding:20}}>
+    <>
+      <style>{`html,body,#root{width:100%;height:100%;margin:0;padding:0;overflow-x:hidden;}`}</style>
+    <div style={{fontFamily:"'Noto Sans HK', sans-serif",minHeight:"100vh",width:"100vw",background:"#eef0f5",display:"flex",flexDirection:"column",padding:0}}>
 
       {/* Header */}
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6,flexWrap:"wrap",gap:8}}>
+      <div style={{background:"linear-gradient(135deg,#1e1b4b,#312e81,#4f46e5)",padding:"14px 24px",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:10,boxShadow:"0 4px 20px rgba(79,70,229,0.4)"}}>
         <div>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:2}}>
-            <div style={{width:38,height:38,background:"linear-gradient(135deg,#4f46e5,#7c3aed)",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 2px 8px rgba(79,70,229,0.35)",flexShrink:0}}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <rect x="3"  y="3"  width="8" height="8" rx="1.5" fill="white" opacity="0.9"/>
-                <rect x="13" y="3"  width="8" height="8" rx="1.5" fill="white" opacity="0.6"/>
-                <rect x="3"  y="13" width="8" height="8" rx="1.5" fill="white" opacity="0.6"/>
-                <rect x="13" y="13" width="8" height="8" rx="1.5" fill="white" opacity="0.9"/>
+          <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:2}}>
+            <div style={{width:44,height:44,background:"rgba(255,255,255,0.15)",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",border:"1.5px solid rgba(255,255,255,0.25)",flexShrink:0}}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <circle cx="9" cy="7" r="4" fill="white" opacity="0.9"/>
+                <circle cx="17" cy="9" r="3" fill="white" opacity="0.6"/>
+                <path d="M1 21c0-4 3.6-7 8-7s8 3 8 7" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.9"/>
+                <path d="M16 14c2.2.5 4 2.5 4 5" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
               </svg>
             </div>
             <div>
-              <h1 style={{margin:0,fontSize:20,color:"#1a1a1a",fontWeight:900,fontFamily:"'Noto Serif HK',serif",letterSpacing:2,lineHeight:1.1}}>廠商客戶管理</h1>
-              <div style={{fontSize:10,color:"#7c3aed",fontWeight:900,fontFamily:"'Noto Serif HK',serif",letterSpacing:4,marginTop:1}}>VENDOR MANAGER</div>
+              <h1 style={{margin:0,fontSize:22,color:"#1a1a1a",fontWeight:900,fontFamily:"'Noto Serif HK',serif",letterSpacing:3,lineHeight:1.1}}>供應商管理</h1>
             </div>
           </div>
-          <p style={{margin:"3px 0 0",fontSize:12,color:"#666"}}>共 {totalCo} 家廠商・{customers.length} 筆聯絡人</p>
-          {lastUpdated && <p style={{margin:"2px 0 0",fontSize:11,color:"#94a3b8"}}>🕐 最後更新：{lastUpdated}</p>}
+          <p style={{margin:"3px 0 0",fontSize:12,color:"rgba(199,210,254,0.85)"}}>共 {totalCo} 家供應商・{customers.length} 筆聯絡人</p>
+          {lastUpdated && <p style={{margin:"2px 0 0",fontSize:11,color:"rgba(199,210,254,0.7)"}}>🕐 最後更新：{lastUpdated}</p>}
           <div style={{marginTop:4}}><SyncBadge/></div>
         </div>
         <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}>
@@ -398,25 +399,26 @@ export default function App() {
             <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" style={{display:"none"}} onChange={handleImport}/>
             {btn("#2563eb", openAdd, "＋ 新增廠商")}
             {btn("#64748b", ()=>setShowConfirm(true), "🗑️ 清空資料")}
-            <button onClick={()=>setIsAdmin(false)} style={{background:"#e8e8e8",border:"none",borderRadius:8,padding:"10px 14px",cursor:"pointer",fontSize:13,color:"#3d5fa8",fontFamily:"'Noto Serif HK',serif",fontWeight:900,boxShadow:"0 2px 6px rgba(0,0,0,0.1)"}}>🔓 登出</button>
+            <button onClick={()=>setIsAdmin(false)} style={{background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:8,padding:"10px 14px",cursor:"pointer",fontSize:13,color:"#fff",fontWeight:700}}>🔓 登出</button>
           </>) : (<>
-            <div style={{width:1,height:32,background:"#ccc",margin:"0 4px"}}/>
-            <button onClick={()=>setShowLogin(true)} style={{background:"#e8e8e8",border:"none",borderRadius:8,padding:"10px 14px",cursor:"pointer",fontSize:13,color:"#3d5fa8",fontFamily:"'Noto Serif HK',serif",fontWeight:900,boxShadow:"0 2px 6px rgba(0,0,0,0.1)"}}>🔒 管理員登入</button>
+            <div style={{width:1,height:32,background:"rgba(255,255,255,0.2)",margin:"0 4px"}}/>
+            <button onClick={()=>setShowLogin(true)} style={{background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:8,padding:"10px 14px",cursor:"pointer",fontSize:13,color:"#fff",fontWeight:700}}>🔒 管理員登入</button>
           </>)}
         </div>
       </div>
 
       {importMsg && (
-        <div style={{background:importMsg.startsWith("✅")?"#d1fae5":"#fee2e2",color:importMsg.startsWith("✅")?"#065f46":"#991b1b",padding:"9px 14px",borderRadius:8,marginBottom:12,fontSize:13}}>
+        <div style={{margin:"12px 20px 0",background:importMsg.startsWith("✅")?"#d1fae5":"#fee2e2",color:importMsg.startsWith("✅")?"#065f46":"#991b1b",padding:"9px 14px",borderRadius:8,fontSize:13}}>
           {importMsg}
         </div>
       )}
 
+      <div style={{padding:"12px 20px 20px",display:"flex",flexDirection:"column",flex:1,gap:12}}>
       <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="🔍 搜尋全名、廠商、聯絡人、電話..."
-        style={{width:"100%",padding:"9px 14px",borderRadius:8,border:"1px solid #ccc",fontSize:13,margin:"10px 0 14px",boxSizing:"border-box",fontFamily:"'Noto Sans HK',sans-serif",background:"#fff"}}/>
+        style={{width:"100%",padding:"10px 16px",borderRadius:10,border:"1px solid #d1d5db",fontSize:14,boxSizing:"border-box",fontFamily:"'Noto Sans HK',sans-serif",background:"#fff",boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}/>
 
       {/* Table */}
-      <div style={{background:"#fff",borderRadius:12,boxShadow:"0 2px 12px rgba(0,0,0,0.08)",overflow:"auto",maxHeight:"62vh"}}>
+      <div style={{background:"#fff",borderRadius:12,boxShadow:"0 2px 12px rgba(0,0,0,0.08)",overflow:"auto",maxHeight:"calc(100vh - 220px)"}}>
         {grouped.length===0 ? (
           <div style={{padding:40,textAlign:"center",color:"#999"}}>尚無資料，請匯入或新增</div>
         ) : (
@@ -457,6 +459,8 @@ export default function App() {
             </tbody>
           </table>
         )}
+      </div>
+
       </div>
 
       {/* 通訊錄預覽 */}
@@ -591,5 +595,6 @@ export default function App() {
         </div>
       )}
     </div>
+    </>
   );
 }
